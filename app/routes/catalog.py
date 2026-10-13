@@ -6,15 +6,20 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import ActionType
-from ..schemas.catalog import ActionTypeRead
+from ..schemas.schemas import ActionTypeRead
+
 
 router = APIRouter(prefix="/catalog", tags=["Catalog"])
 
 
 @router.get("", response_model=list[ActionTypeRead])
-def list_catalog(active: Optional[bool] = None, db: Session = Depends(get_db)):
-
+def list_catalog(
+    active: Optional[bool] = None,
+    db: Session = Depends(get_db),
+):
     query = select(ActionType).order_by(ActionType.id)
+
     if active is not None:
         query = query.where(ActionType.active == active)
+
     return db.scalars(query).all()
