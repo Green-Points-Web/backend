@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from .database import SessionLocal, init_db
 from .routers import catalog
 from .seed import seed_catalog
+from .routes import dashboard
 
 
 
@@ -19,3 +20,4 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="GreenPoints API", lifespan=lifespan)
 
 app.include_router(catalog.router)
+app.include_router(dashboard.router)
