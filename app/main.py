@@ -7,6 +7,7 @@ from .routers import catalog
 from .seed import seed_catalog
 
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
