@@ -8,13 +8,12 @@ DATABASE_URL = f"sqlite:///{BASE_DIR / 'greenpoints.db'}"
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False},  
+    connect_args={"check_same_thread": False}, 
 )
 
 
 @event.listens_for(engine, "connect")
 def enable_sqlite_foreign_keys(dbapi_connection, _connection_record):
-    
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
@@ -24,10 +23,11 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
 class Base(DeclarativeBase):
+    pass
+
 
 
 def get_db():
-    
     db = SessionLocal()
     try:
         yield db
@@ -36,7 +36,6 @@ def get_db():
 
 
 def init_db():
-    
-    from . import models  
+    from .. import models 
 
     Base.metadata.create_all(bind=engine)
