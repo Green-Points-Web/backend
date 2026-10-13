@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import SessionLocal, init_db
-from .routers import catalog
+from .routes import catalog
 from .seed import seed_catalog
 
 
