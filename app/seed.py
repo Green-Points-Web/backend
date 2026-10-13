@@ -15,7 +15,6 @@ CATALOG = [
 
 
 def seed_catalog(db: Session) -> None:
-    """Inserta las acciones del catálogo que aún no existan."""
     existing = set(db.scalars(select(ActionType.name)))
     new_actions = [ActionType(**item) for item in CATALOG if item["name"] not in existing]
     db.add_all(new_actions)
