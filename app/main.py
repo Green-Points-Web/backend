@@ -1,13 +1,14 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
-from .database import SessionLocal, init_db
-from .routers import catalog
+from .database import SessionLocal, init_db, get_db
+from .routes import catalog
 from .seed import seed_catalog
-
 
 
 @asynccontextmanager
@@ -32,5 +33,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health", tags=["Health"])
+def health_check(db: Session = Depends(get_db)):
+    db.execute(text("SELECT 1"))
+    return {"status": "ok", "database": "connected"}
+
 
 app.include_router(catalog.router)
