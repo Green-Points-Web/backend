@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import Boolean, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ..database.database import Base
+from .database import Base
 
 
 class ActionType(Base):
