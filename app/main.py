@@ -7,6 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .database import SessionLocal, init_db, get_db
+from .database import SessionLocal, init_db
 from .routes import catalog
 from .seed import seed_catalog
 
