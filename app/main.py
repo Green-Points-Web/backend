@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal, init_db, get_db
-from app.routes import catalog, dashboard, actions, points
+from app.routes import catalog, dashboard, actions, points, history
 from app.seed import seed_catalog
 
 
@@ -45,4 +45,5 @@ def health_check(db: Session = Depends(get_db)):
 app.include_router(catalog.router)
 app.include_router(dashboard.router)
 app.include_router(actions.router)
+app.include_router(history.router)
 app.include_router(points.router)
