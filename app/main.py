@@ -6,11 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from .database import SessionLocal, init_db, get_db
-from .database import SessionLocal, init_db
-from .routes import catalog
-from .seed import seed_catalog
-from .routes import dashboard
+from app.database import SessionLocal, init_db, get_db
+from app.routes import catalog, dashboard, actions
+from app.seed import seed_catalog
+
 
 
 @asynccontextmanager
@@ -45,3 +44,4 @@ def health_check(db: Session = Depends(get_db)):
 
 app.include_router(catalog.router)
 app.include_router(dashboard.router)
+app.include_router(actions.router)
