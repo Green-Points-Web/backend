@@ -17,14 +17,14 @@ def get_history(db: Session = Depends(get_db)):
         select(
             ActionLog.id,
             ActionLog.action_type_id,
-            ActionLog.action_date,
+            ActionLog.date.label("action_date"),
             ActionLog.description,
-            ActionLog.points_earned,
-            ActionLog.co2_saved,
+            ActionLog.points_awarded.label("points_earned"),
+            ActionLog.co2_awarded.label("co2_saved"),
             ActionLog.category,
         )
         .join(ActionType, ActionType.id == ActionLog.action_type_id)
-        .order_by(ActionLog.action_date.desc())
+        .order_by(ActionLog.date.desc())
     ).all()
 
     return[
