@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import ActionLog, ActionType
+from ..models.action_type_model import ActionLog, ActionType
 from ..schemas.catalog import ActionLogRead
 
 router = APIRouter(
