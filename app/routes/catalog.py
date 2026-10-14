@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import ActionType
-from ..schemas.schemas import ActionTypeRead
+from ..schemas.catalog import ActionTypeRead
 
 
 router = APIRouter(prefix="/catalog", tags=["Catalog"])
