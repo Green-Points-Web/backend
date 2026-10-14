@@ -11,17 +11,21 @@ router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
 @router.get("")
 def get_dashboard(db: Session = Depends(get_db)):
-    total_points = db.scalar(
-        select(func.coalesce(func.sum(ActionLog.points_awarded), 0))
-    )
+    summary = db.execute(
+        select(
+            func.coalesce(
+                func.sum(ActionLog.points_awarded), 0
+            ).label("total_points"),
+            func.count(ActionLog.id).label("total_actions"),
+            func.coalesce(
+                func.sum(ActionLog.co2_awarded), 0.0
+            ).label("total_co2_impact"),
+        )
+    ).one()
 
-    total_actions = db.scalar(
-        select(func.count(ActionLog.id))
-    )
-
-    total_co2_impact = db.scalar(
-        select(func.coalesce(func.sum(ActionLog.co2_awarded), 0.0))
-    )
+    total_points = summary.total_points
+    total_actions = summary.total_actions
+    total_co2_impact = summary.total_co2_impact
 
     if total_points < 100:
         current_level = "Seed"
