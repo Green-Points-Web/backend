@@ -12,7 +12,7 @@ router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 @router.get("")
 def get_dashboard(db: Session = Depends(get_db)):
     total_points = db.scalar(
-        select(func.coalesce(func.sum(ActionLog.points_awarded), 0))
+        select(func.coalesce(func.sum(ActionLog.points_earned), 0))
     )
 
     total_actions = db.scalar(
@@ -20,7 +20,7 @@ def get_dashboard(db: Session = Depends(get_db)):
     )
 
     total_co2_impact = db.scalar(
-        select(func.coalesce(func.sum(ActionLog.co2_awarded), 0.0))
+        select(func.coalesce(func.sum(ActionLog.co2_earned), 0.0))
     )
 
     if total_points < 100:

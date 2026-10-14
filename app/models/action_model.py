@@ -29,11 +29,11 @@ class ActionLog(Base):
     action_type_id: Mapped[int] = mapped_column(
         ForeignKey("action_types.id"), nullable=False
     )
-    date: Mapped[datetime.date] = mapped_column(nullable=False)
+    action_date: Mapped[datetime.date] = mapped_column(nullable=False)
     description: Mapped[Optional[str]] = mapped_column(String(255))
 
 
-    points_awarded: Mapped[int] = mapped_column(Integer, nullable=False)
-    co2_awarded: Mapped[float] = mapped_column(Float, nullable=False)
+    points_earned: Mapped[int] = mapped_column(Integer, nullable=False)
+    co2_earned: Mapped[float] = mapped_column(Float, nullable=False)
 
     action_type: Mapped["ActionType"] = relationship(back_populates="logs")
