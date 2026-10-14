@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .models import ActionType
+from app.models.action_type_model import ActionType
 
 CATALOG = [
     {"name": "Ir andando al trabajo", "category": "Movilidad", "points": 10, "co2_kg": 2.0},
