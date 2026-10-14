@@ -33,4 +33,35 @@ async def add_points(user_id: str, request: PointsRequest):
 async def get_points(user_id: str):
     if user_id not in user_points:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return {"user_id": user_id, "points": user_points[user_id], "level": level_for(user_points[user_id])} 
+    
+    total = user_points[user_id]
+    thresholds = {
+      "Semilla": 100,
+      "Brote": 300,
+      "Arbol": 700,
+      "Bosque": 1500,
+      "Heroe del planeta": float("inf")
+    }
+
+    current_level = level_for(total)
+    next_threshold = thresholds.get(current_level, float("inf"))
+
+    return {
+        "user_id": user_id,
+        "points": total,
+        "level": current_level,
+        "next_level": (
+            next (
+                (name for name, threshold in thresholds.items() 
+                 if threshold == next_threshold),
+                 None,
+            )
+            if next_threshold != float("inf") 
+            else None
+        ),
+        "points_to_next_level": (
+            next_threshold - total 
+            if next_threshold != float("inf") 
+            else None
+        ),
+    }
