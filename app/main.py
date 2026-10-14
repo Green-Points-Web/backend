@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import SessionLocal, init_db
-from .routes import catalog
+from .routes import catalog, points
 from .seed import seed_catalog
 
 
@@ -34,3 +34,4 @@ app.add_middleware(
 )
 
 app.include_router(catalog.router)
+app.include_router(points.router)
