@@ -22,5 +22,15 @@ def level_for(points: int) -> str:
         return "Bosque"
     return "Heroe del planeta" 
 
- 
+@app.post("/user/{user_id}/points")
+async def add_points(user_id: str, request: PointsRequest):
+    if user_id not in user_points:
+        user_points[user_id] = 0
+    user_points[user_id] += request.points
+    return {"user_id": user_id, "points": user_points[user_id], "level": level_for(user_points[user_id])}
 
+@app.get("/user/{user_id}/points")
+async def get_points(user_id: str):
+    if user_id not in user_points:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return {"user_id": user_id, "points": user_points[user_id], "level": level_for(user_points[user_id])} 
