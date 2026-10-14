@@ -4,6 +4,7 @@ from datetime import date
 
 from app.database import get_db
 from app.models.action_type_model import ActionType, ActionLog
+from app.schemas.schemas import ActionCreate
 
 router = APIRouter(
     prefix="/actions",
@@ -12,13 +13,13 @@ router = APIRouter(
 
 
 @router.post("/")
-def register_action(action_data: dict, db: Session = Depends(get_db)):
+def register_action(action_data: ActionCreate, db: Session = Depends(get_db)):
     
-    action_date_str = action_data.get("action_date")
-    if action_date_str > str(date.today()):
+    action_date_value = action_data.action_date
+    if action_date_value > date.today():
         raise HTTPException(status_code=400, detail="La fecha de la acción no puede ser en el futuro.")
 
-    action_type_id = action_data.get("action_type_id")
+    action_type_id = action_data.action_type_id
     action_type = db.query(ActionType).filter(ActionType.id == action_type_id).first()
     
     if not action_type:
@@ -29,8 +30,8 @@ def register_action(action_data: dict, db: Session = Depends(get_db)):
 
     new_action = ActionLog(
         action_type_id=action_type.id,
-        date=action_date_str,                    
-        description=action_data.get("notes", ""), 
+        date=action_date_value,                   
+        description=action_data.description,
         points_awarded=points_earned,              
         co2_awarded=co2_saved                      
     )

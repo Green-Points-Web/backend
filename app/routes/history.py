@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import ActionLog, ActionType
+from ..models.action_type_model import ActionLog, ActionType
 from ..schemas.catalog import ActionLogRead
 
 router = APIRouter(
@@ -21,7 +21,7 @@ def get_history(db: Session = Depends(get_db)):
             ActionLog.description,
             ActionLog.points_awarded.label("points_earned"),
             ActionLog.co2_awarded.label("co2_saved"),
-            ActionLog.category,
+            ActionType.category,
         )
         .join(ActionType, ActionType.id == ActionLog.action_type_id)
         .order_by(ActionLog.date.desc())
