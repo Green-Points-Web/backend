@@ -3,12 +3,10 @@ from backend.routes.points import app, level_for, user_points
 
 client = TestClient(app)
 
-def setup_function():
-    
+def setup_function():   
     user_points.clear()
-    
-def test_level_for_thresholds():
 
+def test_level_for_thresholds():
     # Semilla (< 100)
     assert level_for(0) == "Semilla"
     assert level_for(50) == "Semilla"
@@ -32,3 +30,15 @@ def test_level_for_thresholds():
     # Heroe del planeta (>= 1500)
     assert level_for(1500) == "Heroe del planeta"
     assert level_for(2500) == "Heroe del planeta"
+
+def test_add_points_endpoint():
+    response = client.post(
+        "/user/test_user/points", 
+        json={"user_id": "test_user", "points": 150}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["user_id"] == "test_user"
+    assert data["points"] == 150
+    assert data["level"] == "Brote"
+
