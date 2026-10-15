@@ -6,3 +6,29 @@ client = TestClient(app)
 def setup_function():
     
     user_points.clear()
+    
+def test_level_for_thresholds():
+
+    # Semilla (< 100)
+    assert level_for(0) == "Semilla"
+    assert level_for(50) == "Semilla"
+    assert level_for(99) == "Semilla"
+    
+    # Brote (100 a 299)
+    assert level_for(100) == "Brote"
+    assert level_for(200) == "Brote"
+    assert level_for(299) == "Brote"
+    
+    # Arbol (300 a 699)
+    assert level_for(300) == "Arbol"
+    assert level_for(500) == "Arbol"
+    assert level_for(699) == "Arbol"
+    
+    # Bosque (700 a 1499)
+    assert level_for(700) == "Bosque"
+    assert level_for(1000) == "Bosque"
+    assert level_for(1499) == "Bosque"
+    
+    # Heroe del planeta (>= 1500)
+    assert level_for(1500) == "Heroe del planeta"
+    assert level_for(2500) == "Heroe del planeta"
