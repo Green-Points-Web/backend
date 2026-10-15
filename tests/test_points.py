@@ -57,3 +57,7 @@ def test_get_points_endpoint():
     assert data["next_level"] == "Arbol"
     assert data["points_to_next_level"] == 50 
 
+def test_get_points_user_not_found():
+    response = client.get("/user/usuario_fantasma/points")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Usuario no encontrado"}
