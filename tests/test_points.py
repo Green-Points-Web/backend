@@ -42,3 +42,18 @@ def test_add_points_endpoint():
     assert data["points"] == 150
     assert data["level"] == "Brote"
 
+def test_get_points_endpoint():
+    client.post(
+        "/user/test_user/points", 
+        json={"user_id": "test_user", "points": 250}
+    )
+    
+    response = client.get("/user/test_user/points")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["user_id"] == "test_user"
+    assert data["points"] == 250
+    assert data["level"] == "Brote"
+    assert data["next_level"] == "Arbol"
+    assert data["points_to_next_level"] == 50 
+
