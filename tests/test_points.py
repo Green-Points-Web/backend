@@ -60,11 +60,12 @@ def create_action_type(db):
     return action_type
 
 
-def create_action_log(db, action_type_id, points):
+def create_action_log(db, action_type_id, points, category="Test"):
     action = ActionLog(
         action_type_id=action_type_id,
         date=datetime.date(2026, 1, 10),
         description="Points test",
+        category=category,
         points_awarded=points,
         co2_awarded=1.0,
     )
