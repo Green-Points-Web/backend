@@ -29,6 +29,7 @@ class ActionLog(Base):
     )
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     description: Mapped[Optional[str]] = mapped_column(String(255))
+    category: Mapped[str] = mapped_column(String(50), nullable=False)
     points_awarded: Mapped[int] = mapped_column(Integer, nullable=False)
     co2_awarded: Mapped[float] = mapped_column(Float, nullable=False)
 

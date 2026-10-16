@@ -30,10 +30,11 @@ def register_action(action_data: ActionCreate, db: Session = Depends(get_db)):
 
     new_action = ActionLog(
         action_type_id=action_type.id,
-        date=action_date_value,                   
+        date=action_date_value,
+        category=action_type.category,
         description=action_data.description,
-        points_awarded=points_earned,              
-        co2_awarded=co2_saved                      
+        points_awarded=points_earned,
+        co2_awarded=co2_saved
     )
     
     db.add(new_action)
