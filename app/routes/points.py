@@ -33,8 +33,6 @@ def get_total_points(db: Session) -> int:
 
 @router.post("/user/{user_id}/points")
 def add_points(user_id: str, db: Session = Depends(get_db)):
-    # Los puntos se calculan con las acciones guardadas.
-    # No se añaden puntos manualmente.
     total = get_total_points(db)
 
     return {
@@ -46,8 +44,6 @@ def add_points(user_id: str, db: Session = Depends(get_db)):
 
 @router.get("/user/{user_id}/points")
 def get_points(user_id: str, db: Session = Depends(get_db)):
-    # En este proyecto no hay autenticación ni tabla de usuarios.
-    # El usuario de prueba representa el único empleado.
     if user_id != "test_user":
         raise HTTPException(
             status_code=404,
@@ -57,17 +53,18 @@ def get_points(user_id: str, db: Session = Depends(get_db)):
     total = get_total_points(db)
 
     thresholds = [
-        ("Seed", 100),
-        ("Sprout", 300),
-        ("Tree", 700),
-        ("Forest", 1500),
+        ("Seed", 0),
+        ("Sprout", 100),
+        ("Tree", 300),
+        ("Forest", 700),
+        ("Planet Hero", 1500),
     ]
 
     next_level = None
     points_to_next_level = None
 
     for name, threshold in thresholds:
-        if total < threshold:
+        if threshold > total:
             next_level = name
             points_to_next_level = threshold - total
             break
