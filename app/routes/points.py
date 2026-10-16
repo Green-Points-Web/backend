@@ -1,67 +1,81 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
 
-app = FastAPI()
-router = APIRouter()
-app.include_router(router)
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
-user_points: dict[str, int] = {}
+from app.database import get_db
+from app.models.action_type_model import ActionLog
 
-class PointsRequest(BaseModel):
-    user_id: str = Field(..., description="El ID del usuario")
-    points: int = Field(..., description="El número de puntos a agregar o restar")
+
+router = APIRouter(tags=["Points"])
+
 
 def level_for(points: int) -> str:
     if points < 100:
-        return "Semilla"
+        return "Seed"
     if points < 300:
-        return "Brote"
+        return "Sprout"
     if points < 700:
-        return "Arbol"
+        return "Tree"
     if points < 1500:
-        return "Bosque"
-    return "Heroe del planeta" 
+        return "Forest"
+    return "Planet Hero"
 
-@app.post("/user/{user_id}/points")
-async def add_points(user_id: str, request: PointsRequest):
-    if user_id not in user_points:
-        user_points[user_id] = 0
-    user_points[user_id] += request.points
-    return {"user_id": user_id, "points": user_points[user_id], "level": level_for(user_points[user_id])}
 
-@app.get("/user/{user_id}/points")
-async def get_points(user_id: str):
-    if user_id not in user_points:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    
-    total = user_points[user_id]
-    thresholds = {
-      "Semilla": 100,
-      "Brote": 300,
-      "Arbol": 700,
-      "Bosque": 1500,
-      "Heroe del planeta": float("inf")
-    }
+def get_total_points(db: Session) -> int:
+    total = db.scalar(
+        select(
+            func.coalesce(func.sum(ActionLog.points_awarded), 0)
+        )
+    )
+    return int(total or 0)
 
-    current_level = level_for(total)
-    next_threshold = thresholds.get(current_level, float("inf"))
+
+@router.post("/user/{user_id}/points")
+def add_points(user_id: str, db: Session = Depends(get_db)):
+    # Los puntos se calculan con las acciones guardadas.
+    # No se añaden puntos manualmente.
+    total = get_total_points(db)
 
     return {
         "user_id": user_id,
         "points": total,
-        "level": current_level,
-        "next_level": (
-            next (
-                (name for name, threshold in thresholds.items() 
-                 if threshold == next_threshold),
-                 None,
-            )
-            if next_threshold != float("inf") 
-            else None
-        ),
-        "points_to_next_level": (
-            next_threshold - total 
-            if next_threshold != float("inf") 
-            else None
-        ),
+        "level": level_for(total),
+    }
+
+
+@router.get("/user/{user_id}/points")
+def get_points(user_id: str, db: Session = Depends(get_db)):
+    # En este proyecto no hay autenticación ni tabla de usuarios.
+    # El usuario de prueba representa el único empleado.
+    if user_id != "test_user":
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado",
+        )
+
+    total = get_total_points(db)
+
+    thresholds = [
+        ("Seed", 100),
+        ("Sprout", 300),
+        ("Tree", 700),
+        ("Forest", 1500),
+    ]
+
+    next_level = None
+    points_to_next_level = None
+
+    for name, threshold in thresholds:
+        if total < threshold:
+            next_level = name
+            points_to_next_level = threshold - total
+            break
+
+    return {
+        "user_id": user_id,
+        "points": total,
+        "level": level_for(total),
+        "next_level": next_level,
+        "points_to_next_level": points_to_next_level,
     }
