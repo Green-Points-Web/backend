@@ -1,10 +1,9 @@
 from fastapi.testclient import TestClient
-from app.routes.points import app, level_for, user_points
+from app.main import app
+from app.routes.points import level_for
 
 client = TestClient(app)
 
-def setup_function():   
-    user_points.clear()
 
 def test_level_for_thresholds():
     # Semilla (< 100)
