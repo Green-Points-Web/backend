@@ -1,13 +1,13 @@
 from datetime import date
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models.action_type_model import ActionLog
-from ..schemas.catalog import ActionLogRead
+from ..schemas.catalog import ActionLogRead, ActionLogUpdate
 
 
 router = APIRouter(
@@ -77,3 +77,59 @@ def get_history(
         )
         for row in rows
     ]
+
+@router.put("/{action_id}")
+def update_history_action(
+    action_id: int,
+    payload: ActionLogUpdate,
+    db: Session = Depends(get_db),
+):
+    action = db.get(ActionLog, action_id)
+
+    if action is None:
+        raise HTTPException(status_code=404, detail="La acción no existe.")
+
+    updates = payload.model_dump(exclude_unset=True)
+    if not updates:
+        raise HTTPException(
+            status_code=422,
+            detail="Debe enviar al menos un campo para actualizar.",
+        )
+
+    if "date" in updates:
+        if updates["date"] is None:
+            raise HTTPException(
+                status_code=422,
+                detail="La fecha de la acción no puede ser nula.",
+            )
+        if updates["date"] > date.today():
+            raise HTTPException(
+                status_code=400,
+                detail="La fecha de la acción no puede ser futura.",
+            )
+
+    for field, value in updates.items():
+        setattr(action, field, value)
+
+    db.commit()
+    db.refresh(action)
+    return {
+        "id": action.id,
+        "action_type_id": action.action_type_id,
+        "action_date": action.date,
+        "description": action.description,
+        "category": action.category,
+        "points_earned": action.points_awarded,
+        "co2_saved": action.co2_awarded,
+    }
+
+
+@router.delete("/{action_id}", status_code=204)
+def delete_history_action(action_id: int, db: Session = Depends(get_db)):
+    action = db.get(ActionLog, action_id)
+
+    if action is None:
+        raise HTTPException(status_code=404, detail="La acción no existe.")
+    db.delete(action)
+    db.commit()
+    return None

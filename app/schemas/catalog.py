@@ -1,7 +1,7 @@
-from datetime import date
+import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ActionTypeRead(BaseModel):
@@ -20,8 +20,13 @@ class ActionLogRead(BaseModel):
 
     id: int
     action_type_id: int
-    action_date: date
+    action_date: datetime.date
     description: Optional[str]
     points_earned: int
     co2_saved: float
     category: str
+
+
+class ActionLogUpdate(BaseModel):
+    date: Optional[datetime.date] = None
+    description: Optional[str] = Field(default=None, max_length=255)
