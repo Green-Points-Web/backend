@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models.action_type_model import ActionLog
+from ..models.action_type_model import ActionLog, ActionType
 from ..schemas.catalog import ActionLogRead, ActionLogUpdate
 
 
@@ -96,20 +96,42 @@ def update_history_action(
             detail="Debe enviar al menos un campo para actualizar.",
         )
 
-    if "date" in updates:
-        if updates["date"] is None:
-            raise HTTPException(
-                status_code=422,
-                detail="La fecha de la acción no puede ser nula.",
-            )
-        if updates["date"] > date.today():
+    non_nullable_fields = {
+        "action_type_id",
+        "action_date",
+        "category",
+        "points_earned",
+        "co2_saved",
+    }
+    if any(updates[field] is None for field in non_nullable_fields if field in updates):
+        raise HTTPException(
+            status_code=422,
+            detail="Los campos de la acción no pueden ser nulos.",
+        )
+
+    if "action_type_id" in updates and db.get(ActionType, updates["action_type_id"]) is None:
+        raise HTTPException(
+            status_code=404,
+            detail="El tipo de acción no existe en el catálogo.",
+        )
+
+    if "action_date" in updates:
+        if updates["action_date"] > date.today():
             raise HTTPException(
                 status_code=400,
                 detail="La fecha de la acción no puede ser futura.",
             )
 
+    field_mapping = {
+        "action_type_id": "action_type_id",
+        "action_date": "date",
+        "description": "description",
+        "category": "category",
+        "points_earned": "points_awarded",
+        "co2_saved": "co2_awarded",
+    }
     for field, value in updates.items():
-        setattr(action, field, value)
+        setattr(action, field_mapping[field], value)
 
     db.commit()
     db.refresh(action)

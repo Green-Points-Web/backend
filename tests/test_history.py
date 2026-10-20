@@ -160,6 +160,64 @@ def test_update_history_action(history_env):
     assert response.json()["description"] == "Actualizada"
 
 
+def test_update_history_action_type_category_points_and_co2(history_env):
+    client, db = history_env
+    original_type = _action_type(db)
+    new_type = _action_type(
+        db,
+        name="Usar transporte público",
+        category="Movilidad",
+        points=10,
+        co2_kg=2.5,
+    )
+    action = _action_log(
+        db,
+        original_type.id,
+        datetime.date(2026, 1, 1),
+        "Original",
+        5,
+        1.0,
+        original_type.category,
+    )
+
+    response = client.put(
+        f"/history/{action.id}",
+        json={
+            "action_type_id": new_type.id,
+            "category": "Transporte",
+            "points_earned": 20,
+            "co2_saved": 4.5,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["action_type_id"] == new_type.id
+    assert response.json()["category"] == "Transporte"
+    assert response.json()["points_earned"] == 20
+    assert response.json()["co2_saved"] == 4.5
+
+    history_item = client.get("/history").json()[0]
+    assert history_item["action_type_id"] == new_type.id
+    assert history_item["category"] == "Transporte"
+    assert history_item["points_earned"] == 20
+    assert history_item["co2_saved"] == 4.5
+
+
+def test_update_history_action_rejects_unknown_action_type(history_env):
+    client, db = history_env
+    at = _action_type(db)
+    action = _action_log(
+        db, at.id, datetime.date(2026, 1, 1), "Original", 5, 1.0, at.category
+    )
+
+    response = client.put(
+        f"/history/{action.id}",
+        json={"action_type_id": 9999},
+    )
+
+    assert response.status_code == 404
+
+
 def test_update_history_action_rejects_future_date(history_env):
     client, db = history_env
     at = _action_type(db)
