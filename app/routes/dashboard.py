@@ -1,13 +1,12 @@
-
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.action_type_model import ActionLog
+from app.core.levels import get_level_info  
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
-
 
 @router.get("")
 def get_dashboard(db: Session = Depends(get_db)):
@@ -27,20 +26,16 @@ def get_dashboard(db: Session = Depends(get_db)):
     total_actions = summary.total_actions
     total_co2_impact = summary.total_co2_impact
 
-    if total_points < 100:
-        current_level = "Seed"
-    elif total_points < 300:
-        current_level = "Sprout"
-    elif total_points < 700:
-        current_level = "Tree"
-    elif total_points < 1500:
-        current_level = "Forest"
-    else:
-        current_level = "Planet Hero"
+    level_data = get_level_info(total_points)
 
     return {
         "total_points": total_points,
-        "current_level": current_level,
         "total_actions": total_actions,
         "total_co2_impact_kg": round(total_co2_impact, 2),
+        "current_level": level_data["current_level"],
+        "level_min": level_data.get("level_min", 0),
+        "next_level": level_data.get("next_level"),
+        "next_level_min": level_data.get("next_level_min"),
+        "points_to_next": level_data.get("points_to_next"),
+        "progress_percent": level_data.get("progress_percent", 100)
     }
