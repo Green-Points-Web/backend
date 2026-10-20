@@ -19,7 +19,7 @@ def get_dashboard(db: Session = Depends(get_db)):
             func.coalesce(
                 func.sum(ActionLog.co2_awarded), 0.0
             ).label("total_co2_impact"),
-        )
+        ).where(ActionLog.cancelled == False)
     ).one()
 
     total_points = summary.total_points if summary.total_points else 0

@@ -32,5 +32,5 @@ class ActionLog(Base):
     category: Mapped[str] = mapped_column(String(50), nullable=False)
     points_awarded: Mapped[int] = mapped_column(Integer, nullable=False)
     co2_awarded: Mapped[float] = mapped_column(Float, nullable=False)
-
+    cancelled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     action_type: Mapped["ActionType"] = relationship(back_populates="logs")

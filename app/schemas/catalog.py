@@ -32,6 +32,9 @@ class ActionLogRead(BaseModel):
     points_earned: int
     co2_saved: float
     category: str
+    cancelled: bool = False
+    annulled: bool = False
+    status: str = "active"
 
 
 class ActionLogUpdate(BaseModel):
@@ -44,3 +47,5 @@ class ActionLogUpdate(BaseModel):
     category: Optional[str] = Field(default=None, min_length=1, max_length=50)
     points_earned: Optional[int] = Field(default=None, gt=0)
     co2_saved: Optional[float] = Field(default=None, ge=0)
+    cancelled: Optional[bool] = None
+    status: Optional[str] = None

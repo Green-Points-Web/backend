@@ -243,4 +243,6 @@ def test_delete_history_action(history_env):
     response = client.delete(f"/history/{action.id}")
 
     assert response.status_code == 204
-    assert db.get(ActionLog, action.id) is None
+    refreshed = db.get(ActionLog, action.id)
+    assert refreshed is not None
+    assert refreshed.cancelled is True
