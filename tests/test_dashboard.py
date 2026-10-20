@@ -83,6 +83,11 @@ def test_dashboard_without_actions(dashboard_env):
         "current_level": "Seed",
         "total_actions": 0,
         "total_co2_impact_kg": 0.0,
+        "level_min": 0,
+        "next_level": "Sprout",
+        "next_level_min": 100,
+        "points_to_next": 100,
+        "progress_percent": 0,
     }
 
 
@@ -101,6 +106,11 @@ def test_dashboard_aggregates_statistics(dashboard_env):
         "current_level": "Sprout",
         "total_actions": 2,
         "total_co2_impact_kg": 1.36,
+        "level_min": 100,
+        "next_level": "Tree",
+        "next_level_min": 300,
+        "points_to_next": 150,
+        "progress_percent": 25.0,
     }
 
 
