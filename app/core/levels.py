@@ -14,7 +14,6 @@ def get_level_info(total_points: int) -> dict:
             
     current_index = levels.index(current)
     
-    
     if current_index + 1 < len(levels):
         next_level = levels[current_index + 1]
         points_to_next = next_level["min"] - total_points

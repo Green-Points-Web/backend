@@ -22,9 +22,9 @@ def get_dashboard(db: Session = Depends(get_db)):
         )
     ).one()
 
-    total_points = summary.total_points
-    total_actions = summary.total_actions
-    total_co2_impact = summary.total_co2_impact
+    total_points = summary.total_points if summary.total_points else 0
+    total_actions = summary.total_actions if summary.total_actions else 0
+    total_co2_impact = summary.total_co2_impact if summary.total_co2_impact else 0.0
 
     level_data = get_level_info(total_points)
 
