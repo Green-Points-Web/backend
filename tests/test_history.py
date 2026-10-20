@@ -109,7 +109,6 @@ def test_history_newest_first(history_env):
 
 
 def test_history_keeps_points_snapshot(history_env):
-    """Req 2: cambiar los puntos del catálogo no altera el histórico."""
     client, db = history_env
     at = _action_type(db, points=5)
     _action_log(db, at.id, datetime.date(2026, 1, 1), "Reciclé", 5, 1.0, at.category)
@@ -142,3 +141,48 @@ def test_history_filter_by_date_range(history_env):
     body = client.get("/history", params={"start_date": "2026-05-01"}).json()
 
     assert [r["description"] for r in body] == ["junio"]
+
+
+def test_update_history_action(history_env):
+    client, db = history_env
+    at = _action_type(db)
+    action = _action_log(
+        db, at.id, datetime.date(2026, 1, 1), "Original", 5, 1.0, at.category
+    )
+
+    response = client.put(
+        f"/history/{action.id}",
+        json={"date": "2026-02-10", "description": "Actualizada"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["action_date"] == "2026-02-10"
+    assert response.json()["description"] == "Actualizada"
+
+
+def test_update_history_action_rejects_future_date(history_env):
+    client, db = history_env
+    at = _action_type(db)
+    action = _action_log(
+        db, at.id, datetime.date(2026, 1, 1), "Original", 5, 1.0, at.category
+    )
+
+    response = client.put(
+        f"/history/{action.id}",
+        json={"date": (datetime.date.today() + datetime.timedelta(days=1)).isoformat()},
+    )
+
+    assert response.status_code == 400
+
+
+def test_delete_history_action(history_env):
+    client, db = history_env
+    at = _action_type(db)
+    action = _action_log(
+        db, at.id, datetime.date(2026, 1, 1), "Eliminar", 5, 1.0, at.category
+    )
+
+    response = client.delete(f"/history/{action.id}")
+
+    assert response.status_code == 204
+    assert db.get(ActionLog, action.id) is None
