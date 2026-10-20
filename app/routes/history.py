@@ -22,7 +22,7 @@ def get_history(
     min_points: Optional[int] = None,
     include_cancelled: bool = Query(True),
     order: str = Query("desc", pattern="^(asc|desc)$"),
-    limit: int = Query(1000, ge=1, le=10000),
+    limit: Optional[int] = Query(None, ge=1),
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
 ):
@@ -41,7 +41,11 @@ def get_history(
         stmt = stmt.where(ActionLog.cancelled == False)
 
     sort = ActionLog.date.desc() if order == "desc" else ActionLog.date.asc()
-    rows = db.scalars(stmt.order_by(sort, ActionLog.id.desc()).limit(limit).offset(offset)).all()
+    if limit is not None:
+        stmt = stmt.limit(limit)
+    if offset:
+        stmt = stmt.offset(offset)
+    rows = db.scalars(stmt.order_by(sort, ActionLog.id.desc())).all()
 
     result = []
     for action in rows:
