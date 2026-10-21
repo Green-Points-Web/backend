@@ -60,10 +60,9 @@ def _fallback_default(column) -> str:
     return "''"
 
 
-# Statements run after a schema sync to restore meaningful values for columns
-# that were just added (defaults alone are placeholders).
+
 _BACKFILL_STATEMENTS = (
-    # action_logs.category mirrors the category of its catalog entry.
+    
     """
     UPDATE action_logs
     SET category = (
