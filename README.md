@@ -247,12 +247,12 @@ Base de datos **SQLite** con **2 tablas físicas** y **2 entidades lógicas** no
 
 ```mermaid
 erDiagram
-    ACTION_TYPES ||--o{ ACTION_LOGS : "es registrada en"
+    ACTION_TYPES ||--o{ ACTION_LOGS : "is registered in"
 
     ACTION_TYPES {
         int id PK
-        varchar(100) name UK
-        varchar(50) category
+        string name UK
+        string category
         int points
         float co2_kg
         boolean active
@@ -262,13 +262,12 @@ erDiagram
         int id PK
         int action_type_id FK
         date date
-        varchar(255) description
-        varchar(50) category
+        string description
         int points_awarded
         float co2_awarded
         boolean cancelled
     }
-    }
+    
 ```
 
 ### `action_types` (catálogo)
