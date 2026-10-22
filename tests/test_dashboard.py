@@ -13,7 +13,7 @@ from app.models.action_type_model import ActionLog, ActionType
 
 @pytest.fixture
 def dashboard_env(tmp_path):
-    # Create an isolated SQLite database for each test.
+    
     database_path = tmp_path / "test_dashboard.db"
 
     test_engine = create_engine(

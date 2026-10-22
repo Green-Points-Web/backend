@@ -14,7 +14,7 @@ from app.routes.points import level_for
 
 @pytest.fixture
 def points_env(tmp_path):
-    # Creamos una base de datos temporal para las pruebas.
+    
     database_path = tmp_path / "test_points.db"
 
     test_engine = create_engine(
@@ -97,7 +97,7 @@ def test_add_points_endpoint_returns_registered_action_points(points_env):
     action_type = create_action_type(db)
     create_action_log(db, action_type.id, 150)
 
-    # El endpoint consulta los puntos guardados; no los suma manualmente.
+    
     response = client.post("/user/test_user/points")
 
     assert response.status_code == 200
