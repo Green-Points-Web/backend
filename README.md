@@ -1,93 +1,120 @@
-# 🚀 Installation and Setup Guide
+* * *
 
-Welcome to the project repository. This guide provides step-by-step instructions for setting up the development environment, installing required dependencies, running the backend server with FastAPI and Uvicorn, and launching the frontend interface.
+# 🍃 GreenPoints · Backend
 
----
-
-## 📋 Prerequisites
-
-Make sure you have the following installed on your machine before getting started:
-- **Python** (version 3.9 or higher recommended)
-- **Git** for version control
-- A modern web browser
+> Proyecto colaborativo para el desarrollo web de GreenPoints, una aplicación pensada para registrar acciones sostenibles que te permite cuantificar tu impacto ambiental positivo (mediante puntos obtenidos a través del cálculo de CO₂ ahorrado).
 
 ---
 
-## ⚙️ 1. Backend Configuration (FastAPI / Uvicorn)
+## ✨ Aspectos Clave
 
-The backend handles points calculations, user level progression, and API routes.
+*   **📊 Dashboard de impacto:** resumen en tiempo de KPIs —puntos totales, CO₂ ahorrado y acciones registradas— con lista de las acciones más recientes.
+*   **🗂️ Catálogo de acciones:** grid de acciones sostenibles con búsqueda y filtrado por categoría, cada tarjeta codificada por color (Movilidad, Naturaleza, Reciclaje, Participación).
+*   **✅ Registro de acciones:** alta rápida desde el catálogo o mediante un modal dedicado; cada acción guarda fecha, categoría y puntos/CO₂ asociados.
+*   **📜 Historial paginado:** tabla de acciones registradas con paginación (15 por página), iconografía por categoría y acciones de editar/eliminar.
+*   **🌱 Cálculo de impacto:** los puntos se derivan del CO₂ ahorrado según el tipo de acción.
+*   **⚡ SPA sin recargar:** Hash Router propio que inyecta vistas parciales y mantiene la experiencia fluida.
+*   **🔔 Secciones sincronizadas:** un mismo registro se refleja en dashboard e historial en vivo mediante eventos (`action:created` / `action:deleted`), sin refrescar la página.
+*   **🎨 UI ligera y sin dependencias:** Vanilla JS + CSS tradicional e iconografía Material Symbols; sin framework ni bundler.
+*   **🔌 API REST:** consumo del backend con `fetch` nativo, con estados de carga/error y estados vacíos en cada vista.
 
-### 1.1. Synchronize repository changes
-Switch to the development branch and pull the latest updates:
+---
+
+# 🚀 Instalación y Guía de Configuración
+
+Bienvenido al repositorio del proyecto. Esta guía ofrece instrucciones paso a paso para configurar el entorno de desarrollo, instalar las dependencias necesarias, ejecutar el servidor backend con FastAPI y Uvicorn, y lanzar la interfaz del frontend.
+
+---
+
+## 📋 Requisitos previos
+
+Asegúrate de tener instalado lo siguiente en tu equipo antes de comenzar:
+- **Python** (se recomienda versión 3.9 o superior)
+- **Git** para el control de versiones
+- Un navegador web moderno
+
+---
+
+## ⚙️ 1. Configuración del backend (FastAPI / Uvicorn)
+
+El backend gestiona el cálculo de puntos, la progresión de nivel del usuario y las rutas de la API.
+
+### 1.1. Sincronizar los cambios del repositorio
+Cambia a la rama de desarrollo y descarga las últimas actualizaciones:
 ```bash
 git checkout dev
 git pull origin dev
 ```
 
-### 1.2. Create and activate a virtual environment
-Its recommended to isolate your project dependencies:
-``` bash
-# On macOS / Linux
+### 1.2. Crear y activar un entorno virtual
+Se recomienda aislar las dependencias del proyecto:
+```bash
+# En macOS / Linux
 python3 -m venv venv
 source venv/bin/activate
 
-# On Windows (CMD / PowerShell)
+# En Windows (CMD / PowerShell)
 python -m venv venv
 venv\Scripts\activate
 ```
-### 1.3. Install dependencies
-The requirements.txt file contains the exact packages required (fastapi, uvicorn, pydantic, pytest, etc.). Install them with:
-``` bash
-pip install -r backend/requirements.txt
 
-# Note: If you need to install core dependencies directly, run:
+### 1.3. Instalar las dependencias
+El archivo `requirements.txt` contiene los paquetes necesarios (fastapi, uvicorn, pydantic, pytest, etc.). Instálalos con:
+```bash
+pip install -r requirements.txt
+
+# Nota: si necesitas instalar las dependencias principales directamente, ejecuta:
 
 pip install fastapi uvicorn pydantic pytest httpx
 ```
-### 1.4. Run the Uvicorn server
-Start the FastAPI server in development mode with automatic reloading:
-```bash
 
-uvicorn backend.routes.points:app --reload --host 127.0.0.1 --port 8000
+### 1.4. Ejecutar el servidor Uvicorn
+Inicia el servidor FastAPI en modo desarrollo con recarga automática:
+```bash
+uvicorn app.main:app --reload --reload-dir app --host 127.0.0.1 --port 8000
 ```
-* API Endpoint: http://127.0.0.1:8000
+* Endpoint de la API: http://127.0.0.1:8000
+* Documentación interactiva de la API (Swagger UI): http://127.0.0.1:8000/docs
 
-* Interactive API Docs (Swagger UI): http://127.0.0.1:8000/docs
+---
 
-# 💻 2. Running the Frontend
-The frontend renders user point statistics, level progress, and history tables dynamically.
+# 💻 2. Ejecutar el frontend
 
-# 2.1. Launching the Interface
-You can serve the static frontend files using Python's built-in HTTP server:
+El frontend renderiza dinámicamente las estadísticas de puntos del usuario, el progreso de nivel y las tablas de historial.
+
+## 2.1. Lanzar la interfaz
+Puedes servir los archivos estáticos del frontend con el servidor HTTP incorporado de Python:
 ```bash
-
-# Run from the root or frontend directory
+# Ejecutar desde la raíz o desde el directorio frontend
 python3 -m http.server 5500
 ```
-Then navigate to http://127.0.0.1:5500 in your web browser, or open the main index.html file directly.
+Después, abre http://127.0.0.1:5500 en tu navegador, o abre directamente el archivo `index.html` principal.
 
-# 🧪 3. Running Unit Tests (Pytest)
-To verify point ranges, level thresholds (Seed, Sprout, Tree, Forest, Planet Hero), and API endpoints:
+---
+
+# 🧪 3. Ejecutar los tests unitarios (Pytest)
+
+Para verificar los rangos de puntos, los umbrales de nivel (Seed, Sprout, Tree, Forest, Planet Hero) y los endpoints de la API:
 
 ```bash
-pytest backend/tests/test_points.py -v
+pytest tests/ -v
 ```
----
 
 <Elicitations message="What would you like to do next?">
   <Elicitation label="Create requirements.txt file" query="Genera el contenido exacto para el archivo requirements.txt del backend con sus versiones recomendadas."/>
   <Elicitation label="Explain how to connect JS frontend to FastAPI" query="Explícame cómo conectar el script de renderizado de historial en JavaScript con los endpoints de puntos de FastAPI."/>
 </Elicitations>
 
+---
 
-## 🔌 API Endpoints (Action Management)
+## 🔌 Endpoints de la API (Gestión de acciones)
 
-Below are the routes developed for querying the catalog and registering new sustainable actions.
+A continuación se describen las rutas desarrolladas para consultar el catálogo y registrar nuevas acciones sostenibles.
 
-### 1. Get Action Catalog
-- **Route:** `GET /catalog`
-- **Description:** Returns a list of all sustainable actions available to users, including their category, points awarded, and CO2 impact.
-- **Successful Response (200 OK):**
+### 1. Obtener el catálogo de acciones
+- **Ruta:** `GET /catalog`
+- **Descripción:** Devuelve una lista de todas las acciones sostenibles disponibles para los usuarios, incluyendo su categoría, los puntos otorgados y el impacto en CO₂.
+- **Respuesta correcta (200 OK):**
   ```json
   [
     {
@@ -99,28 +126,39 @@ Below are the routes developed for querying the catalog and registering new sust
       "active": true
     }
   ]
-  ## AI Tools Usage and Methodology
+  ```
 
-### Purpose
+---
 
-Artificial Intelligence tools were used as support during the development of GreenPoints to help understand technical concepts, solve programming issues, and improve project documentation.
+## Uso de herramientas de IA y metodología
 
-### How AI Tools Were Used
+### Propósito
 
-- **Technical guidance:** AI tools helped clarify concepts related to Python, FastAPI, Git, and software testing.
-- **Problem-solving:** AI tools were used to investigate errors and explore possible solutions during development.
-- **Documentation:** AI assistance helped organize technical information and improve the clarity of written documentation.
-- **Code review support:** AI-generated suggestions were used as a reference when reviewing code and considering possible improvements.
+Las herramientas de Inteligencia Artificial se utilizaron como apoyo durante el desarrollo de GreenPoints para ayudar a comprender conceptos técnicos, resolver problemas de programación y mejorar la documentación del proyecto.
 
-### Validation and Responsibility
+### Cómo se utilizaron las herramientas de IA
 
-AI-generated responses were reviewed and adapted to the project's requirements. Suggested solutions should be tested before being integrated into the codebase.
+- **Orientación técnica:** las herramientas de IA ayudaron a aclarar conceptos relacionados con Python, FastAPI, Git y pruebas de software.
+- **Resolución de problemas:** se utilizaron herramientas de IA para investigar errores y explorar posibles soluciones durante el desarrollo.
+- **Documentación:** la asistencia de IA ayudó a organizar la información técnica y a mejorar la claridad de la documentación escrita.
+- **Apoyo en la revisión de código:** las sugerencias generadas por IA se usaron como referencia al revisar el código y considerar posibles mejoras.
 
-The development team remains responsible for the final implementation, technical decisions, and verification of the project's functionality.
+### Validación y responsabilidad
 
-### Responsible Use
+Las respuestas generadas por IA fueron revisadas y adaptadas a los requisitos del proyecto. Las soluciones sugeridas deben probarse antes de integrarse en el código.
 
-- AI tools are used as support for learning and development, not as a replacement for understanding the code.
-- Generated suggestions are checked before being applied.
-- Project requirements and coding conventions take priority over AI-generated recommendations.
-- Sensitive information, such as passwords, API keys, and credentials, must not be shared with AI tools.
+El equipo de desarrollo sigue siendo responsable de la implementación final, las decisiones técnicas y la verificación del funcionamiento del proyecto.
+
+### Uso responsable
+
+- Las herramientas de IA se utilizan como apoyo para el aprendizaje y el desarrollo, no como sustituto de la comprensión del código.
+- Las sugerencias generadas se revisan antes de aplicarse.
+- Los requisitos del proyecto y las convenciones de código tienen prioridad sobre las recomendaciones generadas por IA.
+- La información sensible, como contraseñas, claves de API y credenciales, no debe compartirse con herramientas de IA.
+
+
+
+
+
+
+
